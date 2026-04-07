@@ -723,19 +723,19 @@ export default function App() {
       </motion.aside>
 
       {/* Header */}
-      <header className="bg-white border-b-4 border-[#FFD700] px-6 py-4 flex justify-between items-center shadow-md z-30 relative">
+      <header className="bg-white border-b-4 border-[#FFD700] px-3 sm:px-6 py-3 sm:py-4 flex justify-between items-center shadow-md z-30 relative">
         {/* Menu Icon (Left) */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button 
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
           >
-            <Menu className="w-6 h-6 text-[#D42F2F]" />
+            <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-[#D42F2F]" />
           </button>
           <img 
             src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Emblem_of_India_with_transparent_background.png" 
             alt="National Emblem of India" 
-            className="h-12 w-auto object-contain hidden xs:block"
+            className="h-8 sm:h-12 w-auto object-contain hidden xs:block"
             referrerPolicy="no-referrer"
           />
           <div className="hidden lg:block">
@@ -745,15 +745,15 @@ export default function App() {
         </div>
 
         {/* Search Bar (Center) */}
-        <div className="flex-1 max-w-md mx-4">
+        <div className="flex-1 max-w-md mx-2 sm:mx-4">
           <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#D42F2F] transition-colors" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-focus-within:text-[#D42F2F] transition-colors" />
             <input
               type="text"
-              placeholder="Search rules (e.g. Air, Family, Leave)..."
+              placeholder="Search rules..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-[#D42F2F] transition-all"
+              className="w-full pl-8 sm:pl-10 pr-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-100 focus:border-[#D42F2F] transition-all"
             />
             {searchTerm && (
               <button 
@@ -767,7 +767,7 @@ export default function App() {
         </div>
 
         {/* India Post Logo (Right) */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <div className="text-right hidden xl:block">
             <div className="text-sm font-bold text-slate-400">
               {filteredSlides.length > 0 ? `Slide ${currentSlideIndex + 1} / ${filteredSlides.length}` : 'No results'}
@@ -776,54 +776,61 @@ export default function App() {
           <img 
             src="https://upload.wikimedia.org/wikipedia/en/thumb/3/32/India_Post.svg/1280px-India_Post.svg.png" 
             alt="India Post Logo" 
-            className="h-10 w-auto object-contain rounded hidden sm:block"
+            className="h-8 sm:h-10 w-auto object-contain rounded hidden sm:block"
             referrerPolicy="no-referrer"
           />
         </div>
       </header>
 
       {/* Main Presentation Area */}
-      <main className="flex-1 relative flex items-center justify-center p-2 md:p-4 lg:p-6 bg-gradient-to-br from-white to-slate-100">
+      <main className="flex-1 relative flex items-center justify-center p-3 sm:p-4 lg:p-6 bg-gradient-to-br from-white to-slate-100 overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
           {filteredSlides.length > 0 ? (
             <motion.div
               key={slide.id}
               custom={direction}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(_, info) => {
+                if (info.offset.x < -100) nextSlide();
+                else if (info.offset.x > 100) prevSlide();
+              }}
               initial={{ opacity: 0, x: direction * 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: direction * -100 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl shadow-slate-300 border border-slate-100 overflow-hidden flex flex-col min-h-[500px]"
+              className="w-full max-w-6xl bg-white rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl shadow-slate-300 border border-slate-100 overflow-hidden flex flex-col min-h-[400px] sm:min-h-[500px]"
             >
               {/* Slide Category Header */}
-              <div className="px-8 py-4 bg-[#D42F2F] flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-white/90">
+              <div className="px-5 sm:px-8 py-3 sm:py-4 bg-[#D42F2F] flex justify-between items-center">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white/90">
                   Category: <Highlight text={slide.category} query={searchTerm} />
                 </span>
-                <div className="p-2 bg-white rounded-xl shadow-sm">
+                <div className="p-1.5 sm:p-2 bg-white rounded-lg sm:rounded-xl shadow-sm">
                   {slide.icon}
                 </div>
               </div>
 
               {/* Slide Content */}
-              <div className="flex-1 p-8 md:p-12 lg:p-16">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#D42F2F] mb-8 tracking-tight">
+              <div className="flex-1 p-5 sm:p-8 md:p-12 lg:p-16">
+                <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#D42F2F] mb-4 sm:mb-8 tracking-tight">
                   <Highlight text={slide.title} query={searchTerm} />
                 </h2>
                 
-                <ul className="space-y-6">
+                <ul className="space-y-4 sm:space-y-6">
                   {slide.content.map((item, index) => (
                     <motion.li 
                       key={index}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 + 0.2 }}
-                      className="flex items-start gap-4 group"
+                      className="flex items-start gap-3 sm:gap-4 group"
                     >
-                      <div className="mt-1.5 w-5 h-5 rounded-full bg-red-50 flex-shrink-0 flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#D42F2F]"></div>
+                      <div className="mt-1.5 w-3 h-3 sm:w-5 sm:h-5 rounded-full bg-red-50 flex-shrink-0 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                        <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#D42F2F]"></div>
                       </div>
-                      <p className="text-lg md:text-xl lg:text-2xl text-slate-700 leading-relaxed font-medium">
+                      <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-slate-700 leading-relaxed font-medium">
                         <Highlight text={item} query={searchTerm} />
                       </p>
                     </motion.li>
@@ -835,10 +842,10 @@ export default function App() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="mt-12 p-6 bg-amber-50 rounded-2xl border border-amber-100 flex gap-4 items-start"
+                    className="mt-6 sm:mt-12 p-4 sm:p-6 bg-amber-50 rounded-xl sm:rounded-2xl border border-amber-100 flex gap-3 sm:gap-4 items-start"
                   >
-                    <Info className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm md:text-base lg:text-lg text-amber-800 font-semibold leading-relaxed">
+                    <Info className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-amber-800 font-semibold leading-relaxed">
                       <Highlight text={slide.details} query={searchTerm} />
                     </p>
                   </motion.div>
@@ -846,24 +853,27 @@ export default function App() {
               </div>
 
               {/* Slide Footer Navigation */}
-              <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
-                <p className="text-xs text-slate-400 font-medium">
-                  Use arrow keys or buttons to navigate
+              <div className="px-5 sm:px-8 py-4 sm:py-6 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+                <p className="hidden sm:block text-xs text-slate-400 font-medium">
+                  Use arrow keys, swipe, or buttons to navigate
+                </p>
+                <p className="sm:hidden text-[10px] text-slate-400 font-medium">
+                  Swipe or use buttons
                 </p>
                 <div className="flex gap-2">
                   <button 
                     onClick={prevSlide}
                     disabled={currentSlideIndex === 0}
-                    className="p-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm active:scale-95"
+                    className="p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm active:scale-95"
                   >
-                    <ChevronLeft className="w-6 h-6" />
+                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                   <button 
                     onClick={nextSlide}
                     disabled={currentSlideIndex === filteredSlides.length - 1}
-                    className="p-3 rounded-xl bg-[#D42F2F] text-white hover:bg-red-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-red-200 active:scale-95"
+                    className="p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-[#D42F2F] text-white hover:bg-red-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-red-200 active:scale-95"
                   >
-                    <ChevronRight className="w-6 h-6" />
+                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                 </div>
               </div>
@@ -901,7 +911,7 @@ export default function App() {
       </div>
 
       {/* Footer Info */}
-      <div className="bg-[#D42F2F] text-white py-3 px-6 text-center text-sm font-medium border-t-2 border-[#FFD700]">
+      <div className="bg-[#D42F2F] text-white py-2 sm:py-3 px-4 sm:px-6 text-center text-[10px] sm:text-sm font-medium border-t-2 border-[#FFD700]">
         Prepared by Kalandi Charan Sahoo, Office Assistant, Divisional Office, Dhenkanal Postal Division
       </div>
     </div>
